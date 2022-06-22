@@ -1,8 +1,14 @@
 import React,{FC,useState} from 'react';
-import Form from "./components/Form"
+import Forms from "./components/Form"
 import Title from "./components/Title"
 import Todo from "./components/Todo"
 import './App.css';
+
+const arr = () => {
+  let data = localStorage.getItem("data");
+  if (data) return JSON.parse(localStorage.getItem("data") || "");
+  else return [];
+};
 
 interface TodoType{
   id:number,
@@ -11,7 +17,7 @@ interface TodoType{
 
 const App:FC=()=> {
   const [item,setItem]=useState<string>("");
-  const [list,setList]=useState<TodoType[]>([]);
+  const [list,setList]=useState<TodoType[]>(arr);
 
   const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
     setItem(e.target.value);
@@ -33,10 +39,14 @@ const App:FC=()=> {
   const remove=(id:number)=>{
     setList(list.filter(el=>el.id!==id))
   }
+
+  React.useEffect(() => {
+    localStorage.setItem("data", JSON.stringify(list));
+  }, [list]);
   return (
     <div className="App">
       <Title/>
-      <Form item={item} handleChange={handleChange} handleSubmit={handleSubmit}/>
+      <Forms item={item} handleChange={handleChange} handleSubmit={handleSubmit}/>
       <Todo list={list} remove={remove}/>
     </div>
   );
