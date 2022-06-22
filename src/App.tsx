@@ -1,24 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
+import React,{FC,useState} from 'react';
+import Form from "./components/Form"
+import Title from "./components/Title"
+import Todo from "./components/Todo"
 import './App.css';
 
-function App() {
+interface TodoType{
+  id:number,
+  item:string,
+}
+
+const App:FC=()=> {
+  const [item,setItem]=useState<string>("");
+  const [list,setList]=useState<TodoType[]>([]);
+
+  const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
+    setItem(e.target.value);
+  }
+
+  const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();
+    const newItem={
+      id:Math.random(),
+      item,
+    }
+    if(item)
+    {
+      setList([...list,newItem]);
+      setItem("");
+    }
+  }
+
+  const remove=(id:number)=>{
+    setList(list.filter(el=>el.id!==id))
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Title/>
+      <Form item={item} handleChange={handleChange} handleSubmit={handleSubmit}/>
+      <Todo list={list} remove={remove}/>
     </div>
   );
 }
